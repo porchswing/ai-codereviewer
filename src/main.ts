@@ -135,6 +135,7 @@ async function getAIResponse(prompt: string): Promise<Array<{
   };
 
   let response: OpenAI.Chat.Completions.ChatCompletion | null = null;
+  let res = "";
   try {
     response = await openai.chat.completions.create({
       ...queryConfig,
@@ -156,7 +157,7 @@ async function getAIResponse(prompt: string): Promise<Array<{
       return null;
     }
 
-    const res = response.choices[0].message?.content?.trim() || "{}";
+    res = response.choices[0].message?.content?.trim() || "{}";
     if (res.startsWith("```json")) {
       return JSON.parse(res.slice(7, -3)).reviews
     } else {
@@ -164,6 +165,8 @@ async function getAIResponse(prompt: string): Promise<Array<{
     }
   } catch (error) {
     console.error("Error:", error, response?.choices[0].message?.content);
+    console.log("Prompt:", prompt);
+    console.log("Response:", res);
     return null;
   }
 }
